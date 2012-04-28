@@ -9,42 +9,42 @@
 ;- You can start at any node.
 ;- You must visit each edge exactly once.
 ;- All edges are undirected.
-
-(fn [x]
+(fn [edges]
   (letfn
-    [(connected
-       [edges]
-       (reduce
-         (fn [[connected-vertices count] edge]
-           (do
-             (println connected-vertices count edge)
-             [(if (= (first edge) (second edge))
-                connected-vertices
-                (let [edge (set edge)
-                      new (filter
-                            (complement
-                              #(empty?
-                                (#'clojure.set/intersection edge %)))
-                            connected-vertices)]
-                  (into
-                    (#'clojure.set/difference
-                      connected-vertices
-                      (set new))
-                    #{(reduce #'clojure.set/union edge new)})))
-              (assoc
-                (assoc
-                  count
-                  (first edge)
-                  (if (get count (first edge))
-                    (inc (get count (first edge)))
-                    1))
-                (second edge)
-                (if (get count (second edge))
-                  (inc (get count (second edge)))
-                  1))]))
-         [#{} {}]
-         edges))]
-    (let [result (connected x)
+    [(connected-vertices
+       [connected-vertices edge]
+       (if (= (first edge) (second edge))
+         connected-vertices
+         (let [edge (set edge)
+               new (filter
+                     (complement
+                       #(empty? (#'clojure.set/intersection edge %)))
+                     connected-vertices)]
+           (into
+             (#'clojure.set/difference connected-vertices (set new))
+             #{(reduce #'clojure.set/union edge new)}))))
+     (degree
+       [degrees edge]
+       (assoc
+         (assoc
+           degrees
+           (first edge)
+           (if (get degrees (first edge))
+             (inc (get degrees (first edge)))
+             1))
+         (second edge)
+         (if (get degrees (second edge))
+           (inc (get degrees (second edge)))
+           1)))]
+    (let [result (reduce
+                   (fn [[conn-vertices degrees] edge] [(connected-vertices
+                                                              conn-vertices
+                                                              edge)
+                                                            (degree
+                                                              degrees
+                                                              edge)])
+                   [#{} {}]
+                   edges)
           vertices (first result)
           counts (vals (second result))]
       (do
