@@ -12,7 +12,9 @@
 ;- replace a single item with another item
 
 ;WARNING: Some of the test cases may timeout if you write an inefficient solution!
-
+;
+;   Author: Jitesh Sejwal
+;
 (fn [s t]
   (last
     (last
