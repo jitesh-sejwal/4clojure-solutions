@@ -10,6 +10,9 @@
 ;- You can start at any node.
 ;- You must visit each edge exactly once.
 ;- All edges are undirected.
+;
+;   Author: Jitesh Sejwal
+;
 (fn [edges]
   (letfn
     [(connected-vertices
